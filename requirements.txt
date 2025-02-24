@@ -1,1 +1,3 @@
-framefox==1.0.2
+uvicorn==0.34.0
+fastapi==0.115.7
+sqlmodel==0.0.22
