@@ -1,6 +1,6 @@
 from framefox.core.orm.abstract_repository import AbstractRepository
 
-from entity.ingredient import Ingredient
+from src.entity.ingredient import Ingredient
 
 """ Available Methods:
 find(id)                                                     # Retrieve entity by ID
