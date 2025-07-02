@@ -1,0 +1,33 @@
+application:
+  env: "${APP_ENV}"
+  template_dir: "templates"
+  openapi_url: /openapi.json #empty value to disable openapi swagger ui
+  redoc_url: /redoc
+
+  controller:
+    dir: "src/controller/"
+    
+  cors:
+    allow_origins:
+      - "http://localhost"
+      - "http://localhost:8000"
+    allow_credentials: true
+    allow_methods:
+      - "*"
+    allow_headers:
+      - "*"
+
+  session:
+    name: "session_id"
+    file_path: var/session/sessions.db
+    secret_key: "${SESSION_SECRET_KEY}"
+    # redis:
+    #   url: "${REDIS_URL}" # Redis URL (Add REDIS_URL to your .env file)
+    #   prefix: "session:" # Session key prefix in Redis
+    #   db: 0 # Redis database number
+  cookie:
+    max_age: 3600 # 1 hour
+    secure: true
+    http_only: true
+    same_site: "lax" # "strict", "lax", "none"
+    path: "/"

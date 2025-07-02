@@ -1,0 +1,10 @@
+[project]
+name = "cookflow"
+version = "0.1.0"
+authors = [
+    { name = "rleurond", email = "leurond.raphael@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "framefox>=1.1.3",
+]
