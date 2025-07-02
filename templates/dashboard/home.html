@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+
+{% block title %}CookFlow - Hub de Gestion de Repas{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Header avec navigation principale -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-4 text-center mb-4">🍳 CookFlow</h1>
+            <p class="lead text-center text-muted">Votre hub de gestion de repas</p>
+        </div>
+    </div>
+
+    <!-- Statistiques rapides -->
+    <div class="row mb-5">
+        <div class="col-md-4">
+            <div class="card text-center bg-primary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">📦 Ingrédients</h5>
+                    <h2 class="display-4">{{ total_ingredients }}</h2>
+                    <a href="{{ url_for('ingredient.read_all') }}" class="btn btn-light btn-sm">Voir tous</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center bg-success text-white">
+                <div class="card-body">
+                    <h5 class="card-title">📋 Recettes</h5>
+                    <h2 class="display-4">{{ total_recipes }}</h2>
+                    <a href="{{ url_for('recipe.read_all') }}" class="btn btn-light btn-sm">Voir toutes</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center bg-warning text-white">
+                <div class="card-body">
+                    <h5 class="card-title">🍽️ Repas</h5>
+                    <h2 class="display-4">{{ total_meals }}</h2>
+                    <a href="{{ url_for('meal.read_all') }}" class="btn btn-light btn-sm">Voir tous</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions rapides -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <h3 class="mb-3">🚀 Actions Rapides</h3>
+        </div>
+        <div class="col-md-3">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <i class="display-1">🥕</i>
+                    </div>
+                    <h5 class="card-title">Ajouter un Ingrédient</h5>
+                    <p class="card-text">Enrichissez votre garde-manger virtuel</p>
+                    <a href="{{ url_for('ingredient.create') }}" class="btn btn-primary">Ajouter</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <i class="display-1">📝</i>
+                    </div>
+                    <h5 class="card-title">Créer une Recette</h5>
+                    <p class="card-text">Ajoutez vos recettes favorites</p>
+                    <a href="{{ url_for('recipe.create') }}" class="btn btn-success">Créer</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <i class="display-1">🍽️</i>
+                    </div>
+                    <h5 class="card-title">Planifier un Repas</h5>
+                    <p class="card-text">Organisez vos repas de la semaine</p>
+                    <a href="{{ url_for('meal.create') }}" class="btn btn-warning">Planifier</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <i class="display-1">🔗</i>
+                    </div>
+                    <h5 class="card-title">Lier Ingrédients</h5>
+                    <p class="card-text">Associez ingrédients et recettes</p>
+                    <a href="{{ url_for('recipe_ingredient.create') }}" class="btn btn-info">Lier</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Aperçu des derniers ajouts -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">📋 Dernières Recettes</h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_recipes %}
+                        <div class="list-group list-group-flush">
+                            {% for recipe in recent_recipes %}
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>{{ recipe.name }}</strong>
+                                    {% if recipe.description %}
+                                        <br><small class="text-muted">{{ recipe.description[:50] }}...</small>
+                                    {% endif %}
+                                </div>
+                                <a href="{{ url_for('recipe.read', id=recipe.id) }}" class="btn btn-sm btn-outline-primary">Voir</a>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="text-center mt-3">
+                            <a href="{{ url_for('recipe.read_all') }}" class="btn btn-primary">Voir toutes les recettes</a>
+                        </div>
+                    {% else %}
+                        <p class="text-muted text-center">Aucune recette pour le moment.</p>
+                        <div class="text-center">
+                            <a href="{{ url_for('recipe.create') }}" class="btn btn-primary">Créer votre première recette</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">📦 Derniers Ingrédients</h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_ingredients %}
+                        <div class="list-group list-group-flush">
+                            {% for ingredient in recent_ingredients %}
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>{{ ingredient.name }}</strong>
+                                    {% if ingredient.category %}
+                                        <br><small class="text-muted">{{ ingredient.category }}</small>
+                                    {% endif %}
+                                </div>
+                                <a href="{{ url_for('ingredient.read', id=ingredient.id) }}" class="btn btn-sm btn-outline-primary">Voir</a>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="text-center mt-3">
+                            <a href="{{ url_for('ingredient.read_all') }}" class="btn btn-primary">Voir tous les ingrédients</a>
+                        </div>
+                    {% else %}
+                        <p class="text-muted text-center">Aucun ingrédient pour le moment.</p>
+                        <div class="text-center">
+                            <a href="{{ url_for('ingredient.create') }}" class="btn btn-primary">Ajouter votre premier ingrédient</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
