@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Meal List{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center">
+        <h1>Meal List</h1>
+        <a href="{{ url_for('meal.create') }}" class="btn btn-primary">Create New</a>
+    </div>
+    
+    <table class="table table-striped mt-4">
+        <thead>
+            <tr>
+                <th>ID</th>
+                
+                
+                <th>Meal_recipes</th>
+                
+                
+                <th>Name</th>
+                
+                
+                <th>Notes</th>
+                
+                
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>{{ item.id }}</td>
+                
+                
+                
+                <td>{{ item.meal_recipes|length }} element(s)</td>
+                
+                
+                
+                
+                <td>{{ item.name }}</td>
+                
+                
+                
+                
+                <td>{{ item.notes }}</td>
+                
+                
+                
+                <td>
+                    <div class="d-flex gap-2">
+                        <a href="{{ url_for('meal.read', id=item.id) }}" class="btn btn-sm btn-info">View</a>
+                        <a href="{{ url_for('meal.update', id=item.id) }}" class="btn btn-sm btn-warning">Edit</a>
+                        <form method="POST" action="{{ url_for('meal.delete', id=item.id) }}" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this item?');">Delete</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

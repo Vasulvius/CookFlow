@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Recipe_ingredient List{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center">
+        <h1>Recipe_ingredient List</h1>
+        <a href="{{ url_for('recipe_ingredient.create') }}" class="btn btn-primary">Create New</a>
+    </div>
+    
+    <table class="table table-striped mt-4">
+        <thead>
+            <tr>
+                <th>ID</th>
+                
+                
+                <th>Recipe</th>
+                
+                
+                <th>Ingredient</th>
+                
+                
+                <th>Quantity</th>
+                
+                
+                <th>Unit</th>
+                
+                
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>{{ item.id }}</td>
+                
+                
+                
+                <td>{{ item.recipe.id if item.recipe else "N/A" }}</td>
+                
+                
+                
+                
+                <td>{{ item.ingredient.id if item.ingredient else "N/A" }}</td>
+                
+                
+                
+                
+                <td>{{ item.quantity }}</td>
+                
+                
+                
+                
+                <td>{{ item.unit }}</td>
+                
+                
+                
+                <td>
+                    <div class="d-flex gap-2">
+                        <a href="{{ url_for('recipe_ingredient.read', id=item.id) }}" class="btn btn-sm btn-info">View</a>
+                        <a href="{{ url_for('recipe_ingredient.update', id=item.id) }}" class="btn btn-sm btn-warning">Edit</a>
+                        <form method="POST" action="{{ url_for('recipe_ingredient.delete', id=item.id) }}" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this item?');">Delete</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Meal Details{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Meal Details</h1>
+    
+    <div class="card mt-4">
+        <div class="card-body"><div class="mb-3">
+                <strong>Meal_recipes:</strong>
+                <span>{{ item.meal_recipes }}</span>
+            </div><div class="mb-3">
+                <strong>Name:</strong>
+                <span>{{ item.name }}</span>
+            </div><div class="mb-3">
+                <strong>Notes:</strong>
+                <span>{{ item.notes }}</span>
+            </div></div>
+    </div>
+
+    <div class="mt-3">
+        <a href="{{ url_for('meal.update', id=item.id) }}" class="btn btn-primary">Edit</a>
+        <a href="{{ url_for('meal.read_all') }}" class="btn btn-secondary">Back</a>
+        <form method="POST" action="{{ url_for('meal.delete', id=item.id) }}" class="d-inline">
+            <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

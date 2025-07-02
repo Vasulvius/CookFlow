@@ -9,5 +9,5 @@ class Recipe(AbstractEntity, table=True):
     name: str = Field(max_length=256, nullable=False)
     description: str = Field(max_length=256, nullable=True)
 
-    recipe_ingredients: List["RecipeIngredient"] = Relationship(back_populates="recipe")
-    meal_recipes: List["MealRecipe"] = Relationship(back_populates="recipe")
+    recipe_ingredients: List["RecipeIngredient"] = Relationship(back_populates="recipe", cascade_delete=True)
+    meal_recipes: List["MealRecipe"] = Relationship(back_populates="recipe", cascade_delete=True)

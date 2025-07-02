@@ -1,9 +1,11 @@
+from fastapi import Request
 from framefox.core.controller.abstract_controller import AbstractController
 from framefox.core.routing.decorator.route import Route
-from typing import Dict
 from src.repository.recipe_ingredient_repository import RecipeIngredientRepository
 from src.entity.recipe_ingredient import RecipeIngredient
 from framefox.core.orm.entity_manager_interface import EntityManagerInterface
+from src.form.recipe_ingredient_type import RecipeIngredientType
+from starlette.responses import HTMLResponse, RedirectResponse
 
 
 class RecipeIngredientController(AbstractController):
@@ -11,157 +13,61 @@ class RecipeIngredientController(AbstractController):
         self.entity_manager = entityManager
         self.repository = RecipeIngredientRepository()
 
-    @Route("/recipe_ingredients", "recipe_ingredient.index", methods=["GET"])
-    async def index(self):
-        """GET /recipe_ingredients - Retrieve all recipe_ingredient resources"""
-        try:
-            items = self.repository.find_all()
-            return self.json({
-                "recipe_ingredients": [item.dict() for item in items],
-                "total": len(items),
-                "status": "success"
-            }, status=200)
-        except Exception as e:
-            return self.json({
-                "error": "Failed to retrieve recipe_ingredients",
-                "message": str(e),
-                "status": "error"
-            }, status=500)
+    @Route("/recipe_ingredients", "recipe_ingredient.read_all", methods=["GET"])
+    async def read_all(self) -> HTMLResponse:
+        items = self.repository.find_all()
+        return self.render("recipe_ingredient/index.html", {"items": items})
 
-    @Route("/recipe_ingredients/{id}", "recipe_ingredient.show", methods=["GET"])
-    async def show(self, id: int):
-        """GET /recipe_ingredients/{id} - Retrieve a specific recipe_ingredient resource"""
-        try:
-            item = self.repository.find(id)
-            if not item:
-                return self.json({
-                    "error": "RecipeIngredient not found",
-                    "status": "not_found"
-                }, status=404)
-
-            return self.json({
-                "recipe_ingredient": item.dict(),
-                "status": "success"
-            }, status=200)
-        except Exception as e:
-            return self.json({
-                "error": "Failed to retrieve recipe_ingredient",
-                "message": str(e),
-                "status": "error"
-            }, status=500)
-
-    @Route("/recipe_ingredients", "recipe_ingredient.create", methods=["POST"])
-    async def create(self, data: RecipeIngredient.generate_create_model()):
-        """POST /recipe_ingredients - Create a new recipe_ingredient resource"""
-        try:
-            recipe_ingredient = self.repository.model(**data.dict())
+    @Route("/recipe_ingredient/create", "recipe_ingredient.create", methods=["GET", "POST"])
+    async def create(self, request: Request) -> HTMLResponse:
+        recipe_ingredient = RecipeIngredient()
+        form = self.create_form(RecipeIngredientType, recipe_ingredient)
+        await form.handle_request(request)
+        if form.is_submitted() and form.is_valid():
             self.entity_manager.persist(recipe_ingredient)
             self.entity_manager.commit()
+            self.flash("success", "RecipeIngredient created successfully!")
+            return self.redirect(self.generate_url("recipe_ingredient.read_all"))
+        return self.render("recipe_ingredient/create.html", {
+            "form": form.create_view()
+        })
 
-            self.entity_manager.refresh(recipe_ingredient)
+    @Route("/recipe_ingredient/{id}", "recipe_ingredient.read", methods=["GET"])
+    async def read(self, id: int) -> HTMLResponse:
+        item = self.repository.find(id)
+        if not item:
+            self.flash("error", "RecipeIngredient not found!")
+            return self.redirect(self.generate_url("recipe_ingredient.read_all"))
+        return self.render("recipe_ingredient/read.html", {"item": item})
 
-            return self.json({
-                "recipe_ingredient": recipe_ingredient.dict(),
-                "message": "RecipeIngredient created successfully",
-                "status": "created"
-            }, status=201)
-        except Exception as e:
-            return self.json({
-                "error": "Failed to create recipe_ingredient",
-                "message": str(e),
-                "status": "error"
-            }, status=400)
+    @Route("/recipe_ingredient/{id}/update", "recipe_ingredient.update", methods=["GET", "POST"])
+    async def update(self, request: Request, id: int) -> HTMLResponse:
+        recipe_ingredient = self.repository.find(id)
+        form = self.create_form(RecipeIngredientType, recipe_ingredient)
 
-    @Route("/recipe_ingredients/{id}", "data.update", methods=["PUT"])
-    async def update(self, id: int, data: RecipeIngredient.generate_create_model()):
-        """PUT /recipe_ingredients/{id} - Replace the entire recipe_ingredient resource"""
+        await form.handle_request(request)
+        if form.is_submitted() and form.is_valid():
+            self.entity_manager.persist(recipe_ingredient)
+            self.entity_manager.commit()
+            self.flash("success", "RecipeIngredient updated successfully!")
+            return self.redirect(self.generate_url("recipe_ingredient.read_all"))
+
+        return self.render("recipe_ingredient/update.html", {
+            "form": form.create_view(),
+            "item": recipe_ingredient 
+        })
+
+    @Route("/recipe_ingredient/delete/{id}", "recipe_ingredient.delete", methods=["POST"])
+    async def delete(self, id: int) -> RedirectResponse:
         try:
             recipe_ingredient = self.repository.find(id)
             if not recipe_ingredient:
-                return self.json({
-                    "error": "RecipeIngredient not found",
-                    "status": "not_found"
-                }, status=404)
-
-            # Complete replacement of the resource
-            update_data = data.dict()
-            for key, value in update_data.items():
-                if hasattr(recipe_ingredient, key):
-                    setattr(recipe_ingredient, key, value)
-
-            self.entity_manager.persist(recipe_ingredient)
-            self.entity_manager.commit()
-
-            self.entity_manager.refresh(recipe_ingredient)
-
-            return self.json({
-                "recipe_ingredient": recipe_ingredient.dict(),
-                "message": "RecipeIngredient updated successfully",
-                "status": "updated"
-            }, status=200)
-        except Exception as e:
-            return self.json({
-                "error": "Failed to update recipe_ingredient",
-                "message": str(e),
-                "status": "error"
-            }, status=400)
-
-    @Route("/recipe_ingredients/{id}", "recipe_ingredient.patch", methods=["PATCH"])
-    async def patch(self, id: int, data: RecipeIngredient.generate_patch_model()):
-        """PATCH /recipe_ingredients/{id} - Partially update a recipe_ingredient resource"""
-        try:
-            recipe_ingredient = self.repository.find(id)
-            if not recipe_ingredient:
-                return self.json({
-                    "error": "RecipeIngredient not found",
-                    "status": "not_found"
-                }, status=404)
-
-            update_data = data.dict(exclude_unset=True)
-
-            # Partial update - only modify provided fields
-            for key, value in update_data.items():
-                if hasattr(recipe_ingredient, key):
-                    setattr(recipe_ingredient, key, value)
-
-            self.entity_manager.persist(recipe_ingredient)
-            self.entity_manager.commit()
-
-            self.entity_manager.refresh(recipe_ingredient)
-
-            return self.json({
-                "recipe_ingredient": recipe_ingredient.dict(),
-                "message": "RecipeIngredient partially updated successfully",
-                "status": "updated"
-            }, status=200)
-        except Exception as e:
-            return self.json({
-                "error": "Failed to patch recipe_ingredient",
-                "message": str(e),
-                "status": "error"
-            }, status=400)
-
-    @Route("/recipe_ingredients/{id}", "recipe_ingredient.destroy", methods=["DELETE"])
-    async def destroy(self, id: int):
-        """DELETE /recipe_ingredients/{id} - Delete a recipe_ingredient resource"""
-        try:
-            recipe_ingredient = self.repository.find(id)
-            if not recipe_ingredient:
-                return self.json({
-                    "error": "RecipeIngredient not found",
-                    "status": "not_found"
-                }, status=404)
-
+                self.flash("error", "RecipeIngredient not found!")
+                return self.redirect(self.generate_url("recipe_ingredient.read_all"))
             self.entity_manager.delete(recipe_ingredient)
             self.entity_manager.commit()
-
-            return self.json({
-                "message": "RecipeIngredient deleted successfully",
-                "status": "deleted"
-            }, status=204)
+            self.flash("success", "RecipeIngredient deleted successfully!")
+            return self.redirect(self.generate_url("recipe_ingredient.read_all"))
         except Exception as e:
-            return self.json({
-                "error": "Failed to delete recipe_ingredient",
-                "message": str(e),
-                "status": "error"
-            }, status=500)
+            self.flash("error", str(e))
+            return self.redirect(self.generate_url("recipe_ingredient.read_all"))

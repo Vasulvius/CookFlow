@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Create Recipe{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Create Recipe</h1>
+    
+    {{ form_start(form, {'action': url_for('recipe.create')}) }}
+        
+        {{ form_row(form, 'recipe_ingredients') }}
+        
+        {{ form_row(form, 'meal_recipes') }}
+        
+        {{ form_row(form, 'name') }}
+        
+        {{ form_row(form, 'description') }}
+        
+        
+        <div class="mt-4">
+            <button type="submit" class="btn btn-primary">Create</button>
+            <a href="{{ url_for('recipe.read_all') }}" class="btn btn-secondary ms-2">Cancel</a>
+        </div>
+    {{ form_end(form) }}
+</div>
+{% endblock %}

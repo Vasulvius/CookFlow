@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Recipe_ingredient Details{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Recipe_ingredient Details</h1>
+    
+    <div class="card mt-4">
+        <div class="card-body"><div class="mb-3">
+                <strong>Recipe:</strong>
+                <span>{{ item.recipe }}</span>
+            </div><div class="mb-3">
+                <strong>Ingredient:</strong>
+                <span>{{ item.ingredient }}</span>
+            </div><div class="mb-3">
+                <strong>Quantity:</strong>
+                <span>{{ item.quantity }}</span>
+            </div><div class="mb-3">
+                <strong>Unit:</strong>
+                <span>{{ item.unit }}</span>
+            </div></div>
+    </div>
+
+    <div class="mt-3">
+        <a href="{{ url_for('recipe_ingredient.update', id=item.id) }}" class="btn btn-primary">Edit</a>
+        <a href="{{ url_for('recipe_ingredient.read_all') }}" class="btn btn-secondary">Back</a>
+        <form method="POST" action="{{ url_for('recipe_ingredient.delete', id=item.id) }}" class="d-inline">
+            <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

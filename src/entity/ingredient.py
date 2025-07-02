@@ -9,4 +9,4 @@ class Ingredient(AbstractEntity, table=True):
     name: str = Field(max_length=256, nullable=False)
     category: str = Field(max_length=256, nullable=True)
 
-    recipe_ingredients: List["RecipeIngredient"] = Relationship(back_populates="ingredient")
+    recipe_ingredients: List["RecipeIngredient"] = Relationship(back_populates="ingredient", cascade_delete=True)

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Update Recipe_ingredient{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Update Recipe_ingredient</h1>
+    
+    {{ form_start(form, {'action': url_for('recipe_ingredient.update', id=item.id)}) }}
+        
+        {{ form_row(form, 'recipe') }}
+        
+        {{ form_row(form, 'ingredient') }}
+        
+        {{ form_row(form, 'quantity') }}
+        
+        {{ form_row(form, 'unit') }}
+        
+        
+        <div class="mt-4">
+            <button type="submit" class="btn btn-primary">Update</button>
+            <a href="{{ url_for('recipe_ingredient.read_all') }}" class="btn btn-secondary ms-2">Cancel</a>
+        </div>
+    {{ form_end(form) }}
+</div>
+{% endblock %}
