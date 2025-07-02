@@ -61,6 +61,19 @@
             </div>
         </div>
         <div class="col-md-3">
+            <div class="card h-100 border-success">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <i class="display-1">📝</i>
+                    </div>
+                    <h5 class="card-title">Créer une Recette Complète</h5>
+                    <p class="card-text">Recette + ingrédients en une fois !</p>
+                    <a href="{{ url_for('recipe.create_with_ingredients') }}" class="btn btn-success">Créer</a>
+                    <a href="{{ url_for('recipe.create') }}" class="btn btn-outline-success btn-sm mt-1">Mode simple</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
             <div class="card h-100">
                 <div class="card-body text-center">
                     <div class="mb-3">

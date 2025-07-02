@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+
+{% block title %}Gérer les ingrédients - {{ recipe.name }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-10 mx-auto">
+            <!-- Header avec progression -->
+            <div class="mb-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h1>🥕 Ingrédients de "{{ recipe.name }}"</h1>
+                    <div class="badge bg-success fs-6">Étape 2/2</div>
+                </div>
+                <div class="progress mt-2" style="height: 6px;">
+                    <div class="progress-bar bg-success" role="progressbar" style="width: 100%"></div>
+                </div>
+                <small class="text-muted">Informations de base → Ingrédients ✓</small>
+            </div>
+
+            <div class="row">
+                <!-- Colonne des ingrédients actuels -->
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h4 class="mb-0">📋 Ingrédients de la recette</h4>
+                            <span class="badge bg-primary">{{ recipe_ingredients|length }} ingrédient(s)</span>
+                        </div>
+                        <div class="card-body">
+                            {% if recipe_ingredients %}
+                                {% for recipe_ingredient in recipe_ingredients %}
+                                <div class="border rounded p-3 mb-3 bg-light">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-4">
+                                            <strong>{{ recipe_ingredient.ingredient.name }}</strong>
+                                            {% if recipe_ingredient.ingredient.category %}
+                                                <br><small class="text-muted">{{ recipe_ingredient.ingredient.category }}</small>
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-md-4">
+                                            <form method="POST" class="d-inline" id="update-form-{{ recipe_ingredient.id }}">
+                                                <div class="input-group input-group-sm">
+                                                    <input type="number" step="0.01" name="quantity" 
+                                                           value="{{ recipe_ingredient.quantity }}" 
+                                                           class="form-control" required>
+                                                    <input type="text" name="unit" 
+                                                           value="{{ recipe_ingredient.unit }}" 
+                                                           class="form-control" placeholder="unité" required>
+                                                </div>
+                                                <input type="hidden" name="recipe_ingredient_id" value="{{ recipe_ingredient.id }}">
+                                                <input type="hidden" name="update_ingredient" value="1">
+                                            </form>
+                                        </div>
+                                        <div class="col-md-4 text-end">
+                                            <button type="submit" form="update-form-{{ recipe_ingredient.id }}" 
+                                                    class="btn btn-sm btn-outline-primary me-1">
+                                                💾 Modifier
+                                            </button>
+                                            <form method="POST" class="d-inline">
+                                                <input type="hidden" name="recipe_ingredient_id" value="{{ recipe_ingredient.id }}">
+                                                <input type="hidden" name="remove_ingredient" value="1">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger"
+                                                        onclick="return confirm('Retirer cet ingrédient ?')">
+                                                    🗑️
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="text-center py-4">
+                                    <div class="mb-3">
+                                        <i class="display-1">🍽️</i>
+                                    </div>
+                                    <h5 class="text-muted">Aucun ingrédient dans cette recette</h5>
+                                    <p class="text-muted">Ajoutez votre premier ingrédient avec le formulaire ci-contre</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Colonne pour ajouter un ingrédient -->
+                <div class="col-md-4">
+                    <div class="card sticky-top" style="top: 20px;">
+                        <div class="card-header">
+                            <h5 class="mb-0">➕ Ajouter un ingrédient</h5>
+                        </div>
+                        <div class="card-body">
+                            <form method="POST">
+                                <div class="mb-3">
+                                    <label class="form-label">Ingrédient</label>
+                                    <select name="ingredient_id" class="form-select" required>
+                                        <option value="">Choisir un ingrédient...</option>
+                                        {% for ingredient in available_ingredients %}
+                                            {% set already_added = recipe_ingredients|selectattr("ingredient_id", "equalto", ingredient.id)|list %}
+                                            {% if not already_added %}
+                                            <option value="{{ ingredient.id }}">
+                                                {{ ingredient.name }}
+                                                {% if ingredient.category %} ({{ ingredient.category }}){% endif %}
+                                            </option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-7 mb-3">
+                                        <label class="form-label">Quantité</label>
+                                        <input type="number" step="0.01" name="quantity" 
+                                               class="form-control" placeholder="250" required>
+                                    </div>
+                                    <div class="col-5 mb-3">
+                                        <label class="form-label">Unité</label>
+                                        <input type="text" name="unit" class="form-control" 
+                                               placeholder="g" required>
+                                    </div>
+                                </div>
+                                
+                                <input type="hidden" name="add_ingredient" value="1">
+                                <button type="submit" class="btn btn-success w-100">
+                                    ➕ Ajouter
+                                </button>
+                            </form>
+
+                            <hr>
+                            
+                            <div class="text-center">
+                                <small class="text-muted mb-2 d-block">Ingrédient manquant ?</small>
+                                <a href="{{ url_for('ingredient.create') }}" 
+                                   class="btn btn-outline-primary btn-sm" target="_blank">
+                                    🆕 Créer un ingrédient
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions finales -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card bg-light">
+                        <div class="card-body text-center">
+                            <h5>🎉 Recette prête !</h5>
+                            <p class="text-muted mb-3">
+                                Votre recette "{{ recipe.name }}" est maintenant complète avec {{ recipe_ingredients|length }} ingrédient(s).
+                            </p>
+                            <div class="d-flex justify-content-center gap-2">
+                                <a href="{{ url_for('recipe.read', id=recipe.id) }}" class="btn btn-primary">
+                                    👀 Voir la recette
+                                </a>
+                                <a href="{{ url_for('recipe.read_all') }}" class="btn btn-success">
+                                    📋 Toutes les recettes
+                                </a>
+                                <a href="{{ url_for('recipe.create_with_ingredients') }}" class="btn btn-outline-primary">
+                                    ➕ Nouvelle recette
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

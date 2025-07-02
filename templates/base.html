@@ -41,7 +41,10 @@
                             </a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="{{ url_for('recipe.read_all') }}">Voir toutes</a></li>
-                                <li><a class="dropdown-item" href="{{ url_for('recipe.create') }}">Créer</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('recipe.create_with_ingredients') }}">
+                                    <strong>Créer complète</strong>
+                                </a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('recipe.create') }}">Créer simple</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="{{ url_for('recipe_ingredient.read_all') }}">Gérer ingrédients</a></li>
                             </ul>

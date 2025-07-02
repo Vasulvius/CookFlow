@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Créer une Recette - Étape 1{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <!-- Indicateur de progression -->
+            <div class="mb-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h1>🍳 Nouvelle Recette</h1>
+                    <div class="badge bg-primary fs-6">Étape 1/2</div>
+                </div>
+                <div class="progress mt-2" style="height: 6px;">
+                    <div class="progress-bar" role="progressbar" style="width: 50%"></div>
+                </div>
+                <small class="text-muted">Informations de base → Ingrédients</small>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">📝 Informations de la recette</h4>
+                </div>
+                <div class="card-body">
+                    {{ form_start(form, {'action': url_for('recipe.create_with_ingredients')}) }}
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                {{ form_row(form, 'name') }}
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                {{ form_row(form, 'description') }}
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{{ url_for('recipe.read_all') }}" class="btn btn-secondary">
+                                <i class="me-2">←</i>Annuler
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                Suivant : Ajouter les ingrédients<i class="ms-2">→</i>
+                            </button>
+                        </div>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+
+            <!-- Preview des ingrédients disponibles -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0">👀 Aperçu des ingrédients disponibles</h5>
+                </div>
+                <div class="card-body">
+                    {% if available_ingredients %}
+                        <div class="row">
+                            {% for ingredient in available_ingredients[:6] %}
+                            <div class="col-md-4 mb-2">
+                                <span class="badge bg-light text-dark">{{ ingredient.name }}</span>
+                            </div>
+                            {% endfor %}
+                            {% if available_ingredients|length > 6 %}
+                            <div class="col-12">
+                                <small class="text-muted">... et {{ available_ingredients|length - 6 }} autres</small>
+                            </div>
+                            {% endif %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted mb-0">Aucun ingrédient disponible. 
+                            <a href="{{ url_for('ingredient.create') }}">Ajoutez-en un</a> avant de continuer.
+                        </p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
