@@ -1,5 +1,5 @@
 - [ ] Add unit tests for recipe
-- [ ] Add menus crud
+- [x] Add menus crud
 - [ ] Planificateur de repas
   - [ ] Ajouter un système d'ingrédients et quantités pour les recettes
   - [ ] Génération d'une liste de course sur la base de menus
