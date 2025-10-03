@@ -4,7 +4,7 @@ from sqlmodel import Field, SQLModel
 
 
 class Recipe(SQLModel, table=True):
-    """Entité Recipe avec SQLModel."""
+    """Recipe entity with SQLModel."""
 
     __tablename__ = "recipes"
 
@@ -14,14 +14,14 @@ class Recipe(SQLModel, table=True):
 
 
 class RecipeCreate(SQLModel):
-    """Modèle pour la création d'une recette."""
+    """Model for creating a recipe."""
 
     name: str = Field(max_length=255)
     description: str = Field()
 
 
 class RecipeRead(SQLModel):
-    """Modèle pour la lecture d'une recette."""
+    """Model for reading a recipe."""
 
     id: UUID
     name: str
@@ -29,7 +29,7 @@ class RecipeRead(SQLModel):
 
 
 class RecipeUpdate(SQLModel):
-    """Modèle pour la mise à jour d'une recette."""
+    """Model for updating a recipe."""
 
     name: str | None = Field(default=None, max_length=255)
     description: str | None = Field(default=None)

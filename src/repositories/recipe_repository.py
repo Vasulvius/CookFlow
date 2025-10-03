@@ -4,7 +4,7 @@ from .base_repository import BaseRepository
 
 
 class RecipeRepository(BaseRepository[Recipe]):
-    """Repository pour gérer les opérations CRUD sur les recettes."""
+    """Repository to manage CRUD operations on recipes."""
 
     def __init__(self):
         super().__init__(Recipe)

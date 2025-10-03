@@ -9,7 +9,7 @@ from ...config.settings import get_settings
 
 
 class DatabaseManager:
-    """Gestionnaire de base de données avec SQLModel."""
+    """Database manager with SQLModel."""
 
     def __init__(self):
         settings = get_settings()
@@ -21,13 +21,13 @@ class DatabaseManager:
         self.session_factory = async_sessionmaker(self.engine, class_=AsyncSession, expire_on_commit=False)  # SQLModel AsyncSession
 
     async def create_tables(self):
-        """Créer toutes les tables."""
+        """Create all tables."""
         async with self.engine.begin() as conn:
             await conn.run_sync(SQLModel.metadata.create_all)
 
     @asynccontextmanager
     async def get_session(self) -> AsyncGenerator[AsyncSession, None]:
-        """Context manager pour obtenir une session de base de données."""
+        """Context manager to obtain a database session."""
         async with self.session_factory() as session:
             try:
                 yield session
@@ -36,7 +36,7 @@ class DatabaseManager:
                 raise
 
     async def close(self):
-        """Fermer le moteur de base de données."""
+        """Close the database engine."""
         await self.engine.dispose()
 
 

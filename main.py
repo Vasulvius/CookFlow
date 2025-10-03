@@ -9,7 +9,7 @@ from src.infrastructure.routers import recipe_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Gestionnaire de cycle de vie de l'application."""
+    """Application lifecycle manager."""
     # Startup
     print(f"Starting {get_settings().app_name} v{get_settings().app_version}")
     print(f"Database URL: {get_settings().database_url}")
@@ -24,33 +24,22 @@ app = FastAPI(title=get_settings().app_name, version=get_settings().app_version,
 
 app.include_router(recipe_router)
 
-# class CreateRecipeRequest(BaseModel):
-#     name: str
-#     description: str
-
-
-# class RecipeResponse(BaseModel):
-#     id: UUID
-#     name: str
-#     description: str
-
 
 async def get_db_session():
-    """Dépendance pour obtenir une session de base de données."""
+    """Dependency to obtain a database session."""
     async for session in db_manager.get_session():
         yield session
 
 
 @app.get("/health")
 async def health_check():
-    """Vérifier l'état de l'application et des settings."""
+    """Check the application's status and settings."""
     settings = get_settings()
     return {
         "status": "healthy",
         "app_name": settings.app_name,
         "version": settings.app_version,
         "debug": settings.debug,
-        "database_url": settings.database_url.split("://")[0] + "://***",  # Masquer les credentials
     }
 
 

@@ -12,7 +12,7 @@ recipe_repository = RecipeRepository()
 
 @router.post("/recipes/", response_model=RecipeRead)
 async def create_recipe(recipe_create: RecipeCreate):
-    """Créer une nouvelle recette."""
+    """Create a new recipe."""
     try:
         recipe = Recipe.model_validate(recipe_create.model_dump())
         created_recipe = await recipe_repository.add(recipe)
@@ -23,25 +23,25 @@ async def create_recipe(recipe_create: RecipeCreate):
 
 @router.get("/recipes/", response_model=List[RecipeRead])
 async def read_recipes():
-    """Récupérer toutes les recettes."""
+    """Retrieve all recipes."""
     return await recipe_repository.get_all()
 
 
 @router.get("/recipes/{recipe_id}", response_model=RecipeRead)
 async def read_recipe(recipe_id: UUID):
-    """Récupérer une recette par son ID."""
+    """Retrieve a recipe by its ID."""
     recipe = await recipe_repository.get_by_id(recipe_id)
     if not recipe:
-        raise HTTPException(status_code=404, detail="Recette non trouvée")
+        raise HTTPException(status_code=404, detail="Recipe not found")
     return recipe
 
 
 @router.put("/recipes/{recipe_id}", response_model=RecipeRead)
 async def update_recipe(recipe_id: UUID, updated_recipe: RecipeUpdate):
-    """Mettre à jour une recette existante."""
+    """Update an existing recipe."""
     existing_recipe = await recipe_repository.get_by_id(recipe_id)
     if not existing_recipe:
-        raise HTTPException(status_code=404, detail="Recette non trouvée")
+        raise HTTPException(status_code=404, detail="Recipe not found")
     updated_recipe = existing_recipe.model_copy(update=updated_recipe.model_dump(exclude_unset=True))
     try:
         result = await recipe_repository.update(updated_recipe)
@@ -52,9 +52,9 @@ async def update_recipe(recipe_id: UUID, updated_recipe: RecipeUpdate):
 
 @router.delete("/recipes/{recipe_id}")
 async def delete_recipe(recipe_id: UUID):
-    """Supprimer une recette par son ID."""
+    """Delete a recipe by its ID."""
     try:
         await recipe_repository.delete(recipe_id)
-        return {"detail": "Recette supprimée avec succès"}
+        return {"detail": "Recipe successfully deleted"}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
