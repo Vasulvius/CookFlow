@@ -4,7 +4,7 @@ from fastapi import FastAPI
 
 from src.config.settings import get_settings
 from src.infrastructure.database import db_manager
-from src.infrastructure.routers import recipe_router
+from src.infrastructure.routers import menu_router, recipe_router
 
 
 @asynccontextmanager
@@ -23,6 +23,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title=get_settings().app_name, version=get_settings().app_version, lifespan=lifespan)
 
 app.include_router(recipe_router)
+app.include_router(menu_router)
 
 
 async def get_db_session():

@@ -15,6 +15,12 @@ class BaseRepository(Generic[T], ABC):
     def __init__(self, model: Type[T]):
         self.model = model
 
+    async def exists(self, entity_id: UUID) -> bool:
+        """Check if an entity exists by its ID."""
+        async with db_manager.get_session() as session:
+            result = await session.exec(select(self.model).where(self.model.id == entity_id))
+            return result.first() is not None
+
     async def add(self, entity: T) -> T:
         """Adds a new entity to the database."""
         async with db_manager.get_session() as session:
