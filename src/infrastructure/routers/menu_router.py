@@ -12,7 +12,7 @@ menu_repository = MenuRepository()
 recipe_repository = RecipeRepository()
 
 
-@router.post("/menu/", response_model=MenuRead)
+@router.post("/", response_model=MenuRead)
 async def create_menu(menu_create: MenuCreate):
     """Create a new menu."""
     try:
@@ -36,13 +36,13 @@ async def create_menu(menu_create: MenuCreate):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/menus/", response_model=List[MenuRead])
+@router.get("/", response_model=List[MenuRead])
 async def read_menus():
     """Retrieve all menus."""
     return await menu_repository.get_all()
 
 
-@router.get("/menus/{menu_id}", response_model=MenuRead)
+@router.get("/{menu_id}", response_model=MenuRead)
 async def read_menu(menu_id: UUID):
     """Retrieve a menu by its ID."""
     menu = await menu_repository.get_by_id(menu_id)
@@ -51,7 +51,7 @@ async def read_menu(menu_id: UUID):
     return menu
 
 
-@router.put("/menu/{menu_id}", response_model=MenuRead)
+@router.put("/{menu_id}", response_model=MenuRead)
 async def update_menu(menu_id: UUID, menu_update: MenuUpdate):
     """Update an existing menu."""
     try:
@@ -83,7 +83,7 @@ async def update_menu(menu_id: UUID, menu_update: MenuUpdate):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.delete("/menus/{menu_id}")
+@router.delete("/{menu_id}")
 async def delete_menu(menu_id: UUID):
     """Delete a menu by its ID."""
     try:

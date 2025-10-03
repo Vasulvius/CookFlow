@@ -10,7 +10,7 @@ router = APIRouter()
 recipe_repository = RecipeRepository()
 
 
-@router.post("/recipes/", response_model=RecipeRead)
+@router.post("/", response_model=RecipeRead)
 async def create_recipe(recipe_create: RecipeCreate):
     """Create a new recipe."""
     try:
@@ -21,13 +21,13 @@ async def create_recipe(recipe_create: RecipeCreate):
         raise HTTPException(status_code=400, detail=str(e))
 
 
-@router.get("/recipes/", response_model=List[RecipeRead])
+@router.get("/", response_model=List[RecipeRead])
 async def read_recipes():
     """Retrieve all recipes."""
     return await recipe_repository.get_all()
 
 
-@router.get("/recipes/{recipe_id}", response_model=RecipeRead)
+@router.get("/{recipe_id}", response_model=RecipeRead)
 async def read_recipe(recipe_id: UUID):
     """Retrieve a recipe by its ID."""
     recipe = await recipe_repository.get_by_id(recipe_id)
@@ -36,7 +36,7 @@ async def read_recipe(recipe_id: UUID):
     return recipe
 
 
-@router.put("/recipes/{recipe_id}", response_model=RecipeRead)
+@router.put("/{recipe_id}", response_model=RecipeRead)
 async def update_recipe(recipe_id: UUID, updated_recipe: RecipeUpdate):
     """Update an existing recipe."""
     existing_recipe = await recipe_repository.get_by_id(recipe_id)
@@ -50,7 +50,7 @@ async def update_recipe(recipe_id: UUID, updated_recipe: RecipeUpdate):
         raise HTTPException(status_code=400, detail=str(e))
 
 
-@router.delete("/recipes/{recipe_id}")
+@router.delete("/{recipe_id}")
 async def delete_recipe(recipe_id: UUID):
     """Delete a recipe by its ID."""
     try:

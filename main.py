@@ -22,8 +22,8 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title=get_settings().app_name, version=get_settings().app_version, lifespan=lifespan)
 
-app.include_router(recipe_router)
-app.include_router(menu_router)
+app.include_router(recipe_router, prefix="/recipes", tags=["Recipes"])
+app.include_router(menu_router, prefix="/menus", tags=["Menus"])
 
 
 async def get_db_session():
