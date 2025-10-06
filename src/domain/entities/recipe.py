@@ -1,6 +1,14 @@
+from typing import TYPE_CHECKING
 from uuid import UUID, uuid4
 
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field, Relationship, SQLModel
+
+if TYPE_CHECKING:
+    from src.domain.entities.recipe_ingredient import (
+        RecipeIngredient,
+        RecipeIngredientCreate,
+        RecipeIngredientRead,
+    )
 
 
 class Recipe(SQLModel, table=True):
@@ -12,12 +20,16 @@ class Recipe(SQLModel, table=True):
     name: str = Field(max_length=255)
     description: str = Field()
 
+    # Relation many-to-many with attributs
+    ingredients: list[RecipeIngredient] = Relationship(back_populates="recipe")
+
 
 class RecipeCreate(SQLModel):
     """Model for creating a recipe."""
 
     name: str = Field(max_length=255)
     description: str = Field()
+    ingredients: list[RecipeIngredientCreate] = []
 
 
 class RecipeRead(SQLModel):
@@ -26,6 +38,7 @@ class RecipeRead(SQLModel):
     id: UUID
     name: str
     description: str
+    ingredients: list[RecipeIngredientRead]
 
 
 class RecipeUpdate(SQLModel):
