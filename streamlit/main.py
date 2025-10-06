@@ -1,4 +1,4 @@
-from pages import accueil, ingredients
+from src.interface.pages import accueil, ingredients_page
 
 import streamlit as st
 
@@ -6,7 +6,7 @@ st.set_page_config(page_title="CookFlow", layout="wide")
 
 PAGES = {
     "Accueil": accueil.show,
-    "Ingrédients": ingredients.show,
+    "Ingrédients": ingredients_page.show,
     # "Recettes": recettes.show,
     # "Planning": planning.show,
 }
