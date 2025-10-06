@@ -1,3 +1,4 @@
+- [x] Separer les venv back et front
 - [x] Add menus crud
 - [ ] Planificateur de repas
   - [x] Ajouter un système d'ingrédients et quantités pour les recettes
