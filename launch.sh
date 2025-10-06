@@ -12,7 +12,7 @@ if [ -z "$VIRTUAL_ENV" ]; then
 fi
 
 # Lancer le serveur FastAPI
-uv run server/main.py
+uv run --package cookflow-server server/main.py
 
 # Lancer streamlit
-uv run streamlit run streamlit/main.py --client.showSidebarNavigation False
+uv run --package cookflow-streamlit streamlit run streamlit/main.py --client.showSidebarNavigation False
