@@ -4,7 +4,7 @@ from uuid import UUID
 
 from sqlmodel import SQLModel, select
 
-from src.infrastructure.database import db_manager
+from src.infrastructure import db_manager
 
 T = TypeVar("T", bound=SQLModel)
 

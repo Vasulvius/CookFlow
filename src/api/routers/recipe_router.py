@@ -3,8 +3,8 @@ from uuid import UUID
 
 from fastapi import APIRouter, HTTPException
 
-from src.entities.recipe import Recipe, RecipeCreate, RecipeRead, RecipeUpdate
-from src.repositories.recipe_repository import RecipeRepository
+from src.domain.entities.recipe import Recipe, RecipeCreate, RecipeRead, RecipeUpdate
+from src.domain.repositories.recipe_repository import RecipeRepository
 
 router = APIRouter()
 recipe_repository = RecipeRepository()

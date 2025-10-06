@@ -1,4 +1,4 @@
-from src.entities.recipe import Recipe
+from src.domain.entities.recipe import Recipe
 
 from .base_repository import BaseRepository
 

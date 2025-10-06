@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from sqlmodel import SQLModel
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from ...config.settings import get_settings
+from .settings import get_settings
 
 
 class DatabaseManager:

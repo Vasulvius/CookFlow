@@ -1,4 +1,4 @@
-from src.entities.menu import Menu
+from src.domain.entities.menu import Menu
 
 from .base_repository import BaseRepository
 

@@ -3,9 +3,9 @@ from uuid import UUID
 
 from fastapi import APIRouter, HTTPException
 
-from src.entities.menu import Menu, MenuCreate, MenuRead, MenuUpdate
-from src.repositories.menu_repository import MenuRepository
-from src.repositories.recipe_repository import RecipeRepository
+from src.domain.entities.menu import Menu, MenuCreate, MenuRead, MenuUpdate
+from src.domain.repositories.menu_repository import MenuRepository
+from src.domain.repositories.recipe_repository import RecipeRepository
 
 router = APIRouter()
 menu_repository = MenuRepository()
