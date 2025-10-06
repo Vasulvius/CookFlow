@@ -4,7 +4,7 @@ from uuid import UUID, uuid4
 from sqlmodel import Field, Relationship, SQLModel
 
 if TYPE_CHECKING:
-    from src.domain.entities.ingredient import Ingredient, IngredientRead
+    from src.domain.entities.ingredient import Ingredient
     from src.domain.entities.recipe import Recipe
 
 
@@ -22,17 +22,25 @@ class RecipeIngredient(SQLModel, table=True):
     unit: str = Field(max_length=50)
 
     # Relations
-    recipe: Recipe = Relationship(back_populates="ingredients")
-    ingredient: Ingredient = Relationship(back_populates="recipes")
+    recipe: "Recipe" = Relationship(back_populates="ingredients")
+    ingredient: "Ingredient" = Relationship(back_populates="recipes")
 
 
 class RecipeIngredientCreate(SQLModel):
+    recipe_id: UUID
     ingredient_id: UUID
     quantity: float
     unit: str
 
 
 class RecipeIngredientRead(SQLModel):
-    ingredient: IngredientRead
+    id: UUID
+    recipe_id: UUID
+    ingredient_id: UUID
+    quantity: float
+    unit: str
+
+
+class RecipeIngredientUpdate(SQLModel):
     quantity: float
     unit: str

@@ -16,10 +16,20 @@ class Ingredient(SQLModel, table=True):
     name: str = Field(max_length=255)
     description: str = Field()
 
-    recipes: list[RecipeIngredient] = Relationship(back_populates="ingredient")
+    recipes: list["RecipeIngredient"] = Relationship(back_populates="ingredient")
+
+
+class IngredientCreate(SQLModel):
+    name: str = Field(max_length=255)
+    description: str = Field()
 
 
 class IngredientRead(SQLModel):
     id: UUID
     name: str
     description: str
+
+
+class IngredientUpdate(SQLModel):
+    name: str | None = Field(default=None, max_length=255)
+    description: str | None = Field(default=None)
