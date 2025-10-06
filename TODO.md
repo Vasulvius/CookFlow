@@ -4,10 +4,7 @@
   - [x] Ajouter un système d'ingrédients et quantités pour les recettes
   - [ ] Génération d'une liste de course sur la base de menus
 - [ ] Faire une petit interface graphique avec streamlit
-  - [ ] Ingredients :
-    - [ ] Create
-    - [x] Read all
-    - [ ] Read one
-    - [ ] Update
-    - [ ] Delete
+  - [x] Ingredients visual CRUD
+  - [ ] Recipe visual CRUD
+  - [ ] Menu visual CRUD
 - [ ] Ajouter système de remplissage de datas
