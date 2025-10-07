@@ -1,10 +1,9 @@
 - [x] Separer les venv back et front
 - [x] Add menus crud
-- [ ] Planificateur de repas
   - [x] Ajouter un système d'ingrédients et quantités pour les recettes
+  - [ ] Système fixe d'unité (l, cl, ml, unit, kg, g, mg, cs, cc) avec conversion
   - [ ] Génération d'une liste de course sur la base de menus
 - [x] Faire une petit interface graphique avec streamlit
   - [x] Ingredients visual CRUD
   - [x] Recipe visual CRUD
   - [x] Menu visual CRUD
-- [ ] Ajouter système de remplissage de datas
