@@ -1,4 +1,4 @@
-from src.interface.pages import accueil, ingredients_page
+from src.interface.pages import accueil, ingredients_page, menus_page, recipes_page
 
 import streamlit as st
 
@@ -10,7 +10,8 @@ def main():
     PAGES = {
         "Accueil": accueil.show,
         "Ingrédients": ingredients_page.show,
-        # "Recettes": recettes.show,
+        "Recettes": recipes_page.show,
+        "Menus": menus_page.show,
         # "Planning": planning.show,
     }
 
