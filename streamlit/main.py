@@ -1,4 +1,10 @@
-from src.interface.pages import accueil, ingredients_page, menus_page, recipes_page
+from src.interface.pages import (
+    accueil,
+    ingredients_page,
+    menus_page,
+    recipes_page,
+    unit_page,
+)
 
 import streamlit as st
 
@@ -12,7 +18,7 @@ def main():
         "Ingrédients": ingredients_page.show,
         "Recettes": recipes_page.show,
         "Menus": menus_page.show,
-        # "Planning": planning.show,
+        "Unités": unit_page.show,
     }
 
     st.sidebar.title("Navigation")

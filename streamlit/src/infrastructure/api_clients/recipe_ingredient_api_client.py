@@ -24,17 +24,17 @@ class RecipeIngredientAPIClient:
             recipe_ingredients = [RecipeIngredient(**item) for item in data]
             return [ri for ri in recipe_ingredients if ri.recipe_id == recipe_id]
 
-    async def create_recipe_ingredient(self, recipe_id: UUID, ingredient_id: UUID, quantity: float, unit: str) -> RecipeIngredient:
+    async def create_recipe_ingredient(self, recipe_id: UUID, ingredient_id: UUID, unit_id: UUID, quantity: float) -> RecipeIngredient:
         async with httpx.AsyncClient(follow_redirects=True) as client:
-            payload = {"recipe_id": str(recipe_id), "ingredient_id": str(ingredient_id), "quantity": quantity, "unit": unit}
+            payload = {"recipe_id": str(recipe_id), "ingredient_id": str(ingredient_id), "unit_id": str(unit_id), "quantity": quantity}
             response = await client.post(f"{self.base_url}/recipe-ingredients/", json=payload)
             response.raise_for_status()
             data = response.json()
             return RecipeIngredient(**data)
 
-    async def update_recipe_ingredient(self, recipe_ingredient_id: UUID, quantity: float, unit: str) -> RecipeIngredient:
+    async def update_recipe_ingredient(self, recipe_ingredient_id: UUID, unit_id: UUID, quantity: float) -> RecipeIngredient:
         async with httpx.AsyncClient(follow_redirects=True) as client:
-            payload = {"quantity": quantity, "unit": unit}
+            payload = {"unit_id": str(unit_id), "quantity": quantity}
             response = await client.put(f"{self.base_url}/recipe-ingredients/{recipe_ingredient_id}", json=payload)
             response.raise_for_status()
             data = response.json()

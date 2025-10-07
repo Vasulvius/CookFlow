@@ -6,6 +6,7 @@ from src.infrastructure.api_clients.recipe_api_client import RecipeAPIClient
 from src.infrastructure.api_clients.recipe_ingredient_api_client import (
     RecipeIngredientAPIClient,
 )
+from src.infrastructure.api_clients.unit_api_client import UnitAPIClient
 
 import streamlit as st
 
@@ -13,6 +14,7 @@ settings = get_settings()
 recipe_api_client = RecipeAPIClient(base_url=f"http://{settings.host}:{settings.port}")
 ingredient_api_client = IngredientAPIClient(base_url=f"http://{settings.host}:{settings.port}")
 recipe_ingredient_api_client = RecipeIngredientAPIClient(base_url=f"http://{settings.host}:{settings.port}")
+unit_api_client = UnitAPIClient(base_url=f"http://{settings.host}:{settings.port}")
 
 
 def show():
@@ -46,6 +48,8 @@ def _show_recipes():
     """Display all recipes with their ingredients."""
     try:
         recipes = asyncio.run(recipe_api_client.get_recipes())
+        units = asyncio.run(unit_api_client.get_units())
+        units_dict = {str(unit.id): unit for unit in units}
 
         # Manual refresh button
         if st.button("🔄 Refresh", key="refresh_recipes"):
@@ -71,15 +75,17 @@ def _show_recipes():
                     # Display ingredients
                     if recipe_with_ingredients.ingredients:
                         st.write("**Ingredients:**")
+                        ingredients = asyncio.run(ingredient_api_client.get_ingredients())
+                        ingredients_dict = {str(ing.id): ing for ing in ingredients}
+
                         for ri in recipe_with_ingredients.ingredients:
-                            # Get ingredient details
-                            try:
-                                ingredients = asyncio.run(ingredient_api_client.get_ingredients())
-                                ingredient = next((ing for ing in ingredients if ing.id == ri.ingredient_id), None)
-                                if ingredient:
-                                    st.write(f"• {ingredient.name}: {ri.quantity} {ri.unit}")
-                            except Exception:
-                                st.write(f"• Ingredient ID {ri.ingredient_id}: {ri.quantity} {ri.unit}")
+                            ingredient = ingredients_dict.get(str(ri.ingredient_id))
+                            unit = units_dict.get(str(ri.unit_id))
+
+                            ingredient_name = ingredient.name if ingredient else f"Ingredient ID {ri.ingredient_id}"
+                            unit_symbol = unit.symbol if unit else f"Unit ID {ri.unit_id}"
+
+                            st.write(f"• {ingredient_name}: {ri.quantity} {unit_symbol}")
                     else:
                         st.write("**Ingredients:** None")
 
@@ -98,9 +104,12 @@ def _add_recipe():
     st.subheader("Add a new recipe")
 
     try:
-        # Get available ingredients
+        # Get available ingredients and units
         ingredients = asyncio.run(ingredient_api_client.get_ingredients())
+        units = asyncio.run(unit_api_client.get_units())
+
         ingredient_options = {f"{ing.name}": ing for ing in ingredients}
+        unit_options = {f"{unit.name} ({unit.symbol})": unit for unit in units}
 
         with st.form("add_recipe_form"):
             name = st.text_input("Recipe name", placeholder="e.g. Pasta Carbonara")
@@ -113,17 +122,18 @@ def _add_recipe():
                 st.session_state.recipe_ingredients = []
 
             # Add ingredient section
-            col1, col2, col3, col4 = st.columns([3, 1, 1, 1])
+            col1, col2, col3, col4 = st.columns([3, 1, 2, 1])
             with col1:
                 selected_ingredient = st.selectbox("Select ingredient", [""] + list(ingredient_options.keys()), key="new_ingredient")
             with col2:
                 quantity = st.number_input("Quantity", min_value=0.0, step=0.1, key="new_quantity")
             with col3:
-                unit = st.text_input("Unit", placeholder="g, ml, pcs", key="new_unit")
+                selected_unit = st.selectbox("Unit", [""] + list(unit_options.keys()), key="new_unit")
             with col4:
                 if st.form_submit_button("Add Ingredient", use_container_width=True):
-                    if selected_ingredient and quantity > 0 and unit:
+                    if selected_ingredient and quantity > 0 and selected_unit:
                         ingredient = ingredient_options[selected_ingredient]
+                        unit = unit_options[selected_unit]
                         st.session_state.recipe_ingredients.append({"ingredient": ingredient, "quantity": quantity, "unit": unit})
                         st.rerun()
 
@@ -133,7 +143,7 @@ def _add_recipe():
                 for i, ri in enumerate(st.session_state.recipe_ingredients):
                     col1, col2 = st.columns([4, 1])
                     with col1:
-                        st.write(f"• {ri['ingredient'].name}: {ri['quantity']} {ri['unit']}")
+                        st.write(f"• {ri['ingredient'].name}: {ri['quantity']} {ri['unit'].symbol}")
                     with col2:
                         if st.form_submit_button("Remove", key=f"remove_{i}", use_container_width=True):
                             st.session_state.recipe_ingredients.pop(i)
@@ -154,7 +164,10 @@ def _add_recipe():
                     for ri in st.session_state.recipe_ingredients:
                         asyncio.run(
                             recipe_ingredient_api_client.create_recipe_ingredient(
-                                recipe_id=created_recipe.id, ingredient_id=ri["ingredient"].id, quantity=ri["quantity"], unit=ri["unit"]
+                                recipe_id=created_recipe.id,
+                                ingredient_id=ri["ingredient"].id,
+                                unit_id=ri["unit"].id,  # Utiliser unit_id au lieu de unit
+                                quantity=ri["quantity"],
                             )
                         )
 
@@ -165,7 +178,7 @@ def _add_recipe():
                     st.error(f"Error adding recipe: {e}")
 
     except Exception as e:
-        st.error(f"Error loading ingredients: {e}")
+        st.error(f"Error loading data: {e}")
 
 
 def _edit_recipe():
@@ -175,7 +188,11 @@ def _edit_recipe():
     try:
         recipes = asyncio.run(recipe_api_client.get_recipes())
         ingredients = asyncio.run(ingredient_api_client.get_ingredients())
+        units = asyncio.run(unit_api_client.get_units())
+
         ingredient_options = {f"{ing.name}": ing for ing in ingredients}
+        unit_options = {f"{unit.name} ({unit.symbol})": unit for unit in units}
+        units_dict = {str(unit.id): unit for unit in units}
 
         if not recipes:
             st.info("No recipes available for editing.")
@@ -197,9 +214,10 @@ def _edit_recipe():
                 # Load current ingredients
                 for ri in current_recipe_ingredients:
                     ingredient = next((ing for ing in ingredients if ing.id == ri.ingredient_id), None)
-                    if ingredient:
+                    unit = units_dict.get(str(ri.unit_id))
+                    if ingredient and unit:
                         st.session_state.edit_recipe_ingredients.append(
-                            {"id": ri.id, "ingredient": ingredient, "quantity": ri.quantity, "unit": ri.unit}
+                            {"id": ri.id, "ingredient": ingredient, "quantity": ri.quantity, "unit": unit}
                         )
 
             with st.form("edit_recipe_form"):
@@ -209,19 +227,20 @@ def _edit_recipe():
                 st.subheader("Ingredients")
 
                 # Add new ingredient section
-                col1, col2, col3, col4 = st.columns([3, 1, 1, 1])
+                col1, col2, col3, col4 = st.columns([3, 1, 2, 1])
                 with col1:
                     new_ingredient = st.selectbox("Add ingredient", [""] + list(ingredient_options.keys()), key="edit_new_ingredient")
                 with col2:
                     new_quantity = st.number_input("Quantity", min_value=0.0, step=0.1, key="edit_new_quantity")
                 with col3:
-                    new_unit = st.text_input("Unit", placeholder="g, ml, pcs", key="edit_new_unit")
+                    new_unit = st.selectbox("Unit", [""] + list(unit_options.keys()), key="edit_new_unit")
                 with col4:
                     if st.form_submit_button("Add", use_container_width=True):
                         if new_ingredient and new_quantity > 0 and new_unit:
                             ingredient = ingredient_options[new_ingredient]
+                            unit = unit_options[new_unit]
                             st.session_state.edit_recipe_ingredients.append(
-                                {"id": None, "ingredient": ingredient, "quantity": new_quantity, "unit": new_unit}  # New ingredient
+                                {"id": None, "ingredient": ingredient, "quantity": new_quantity, "unit": unit}
                             )
                             st.rerun()
 
@@ -229,15 +248,18 @@ def _edit_recipe():
                 if st.session_state.edit_recipe_ingredients:
                     st.write("**Current Ingredients:**")
                     for i, ri in enumerate(st.session_state.edit_recipe_ingredients):
-                        col1, col2, col3, col4 = st.columns([2, 1, 1, 1])
+                        col1, col2, col3, col4 = st.columns([2, 1, 2, 1])
                         with col1:
                             st.write(f"{ri['ingredient'].name}")
                         with col2:
                             new_qty = st.number_input("Qty", value=ri["quantity"], min_value=0.0, step=0.1, key=f"edit_qty_{i}")
                             st.session_state.edit_recipe_ingredients[i]["quantity"] = new_qty
                         with col3:
-                            new_unit = st.text_input("Unit", value=ri["unit"], key=f"edit_unit_{i}")
-                            st.session_state.edit_recipe_ingredients[i]["unit"] = new_unit
+                            current_unit_key = f"{ri['unit'].name} ({ri['unit'].symbol})"
+                            unit_keys = list(unit_options.keys())
+                            current_index = unit_keys.index(current_unit_key) if current_unit_key in unit_keys else 0
+                            new_unit_key = st.selectbox("Unit", unit_keys, index=current_index, key=f"edit_unit_{i}")
+                            st.session_state.edit_recipe_ingredients[i]["unit"] = unit_options[new_unit_key]
                         with col4:
                             if st.form_submit_button("Remove", key=f"edit_remove_{i}", use_container_width=True):
                                 st.session_state.edit_recipe_ingredients.pop(i)
@@ -263,8 +285,8 @@ def _edit_recipe():
                                 recipe_ingredient_api_client.create_recipe_ingredient(
                                     recipe_id=selected_recipe.id,
                                     ingredient_id=ri["ingredient"].id,
+                                    unit_id=ri["unit"].id,  # Utiliser unit_id au lieu de unit
                                     quantity=ri["quantity"],
-                                    unit=ri["unit"],
                                 )
                             )
 
