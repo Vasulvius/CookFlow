@@ -177,12 +177,14 @@ version = "0.1.0"
 source = { virtual = "streamlit" }
 dependencies = [
     { name = "httpx" },
+    { name = "python-dotenv" },
     { name = "streamlit" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "httpx", specifier = ">=0.28.1" },
+    { name = "python-dotenv", specifier = ">=1.0.0" },
     { name = "streamlit", specifier = ">=1.50.0" },
 ]
 

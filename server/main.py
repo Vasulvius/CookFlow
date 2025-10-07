@@ -1,14 +1,13 @@
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
-
-from src.api.routers import (
+from src.infrastructure import db_manager, get_settings
+from src.presentation.routers import (
     ingredient_router,
     menu_router,
     recipe_ingredient_router,
     recipe_router,
 )
-from src.infrastructure import db_manager, get_settings
 
 
 @asynccontextmanager
