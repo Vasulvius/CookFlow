@@ -10,11 +10,11 @@ ingredient_api_client = IngredientAPIClient(base_url=f"http://{settings.host}:{s
 
 
 def show():
-    st.title("Ingrédients 🥗")
-    st.write("Ici tu peux ajouter, modifier ou supprimer des ingrédients.")
+    st.title("Ingredients 🥗")
+    st.write("Here you can add, edit, or delete ingredients.")
 
-    # Créer les onglets
-    tab1, tab2, tab3, tab4 = st.tabs(["📋 Voir", "➕ Ajouter", "✏️ Modifier", "🗑️ Supprimer"])
+    # Create tabs
+    tab1, tab2, tab3, tab4 = st.tabs(["📋 View", "➕ Add", "✏️ Edit", "🗑️ Delete"])
 
     with tab1:
         _show_ingredients()
@@ -30,136 +30,136 @@ def show():
 
 
 def _show_ingredients():
-    """Afficher tous les ingrédients."""
+    """Display all ingredients."""
     try:
         ingredients = asyncio.run(ingredient_api_client.get_ingredients())
 
-        if not ingredients:
-            st.info("Aucun ingrédient trouvé.")
-            return
-
-        st.write(f"**Nombre d'ingrédients :** {len(ingredients)}")
-
-        # Bouton de rafraîchissement manuel
-        if st.button("🔄 Rafraîchir", key="refresh_ingredients"):
+        # Manual refresh button
+        if st.button("🔄 Refresh", key="refresh_ingredients"):
             st.rerun()
 
-        # Afficher dans un format plus propre
+        if not ingredients:
+            st.info("No ingredients found.")
+            return
+
+        st.write(f"**Number of ingredients:** {len(ingredients)}")
+
+        # Display in a cleaner format
         for i, ingredient in enumerate(ingredients, 1):
             with st.container():
                 col1, col2 = st.columns([3, 1])
                 with col1:
                     st.subheader(f"{i}. {ingredient.name}")
-                    st.write(f"**Description :** {ingredient.description}")
+                    st.write(f"**Description:** {ingredient.description}")
                     st.caption(f"ID: {ingredient.id}")
                 with col2:
-                    st.write("")  # Espace pour alignement
+                    st.write("")  # Space for alignment
 
                 st.divider()
 
     except Exception as e:
-        st.error(f"Erreur lors de la récupération des ingrédients: {e}")
+        st.error(f"Error while fetching ingredients: {e}")
 
 
 def _add_ingredient():
-    """Ajouter un nouvel ingrédient."""
-    st.subheader("Ajouter un nouvel ingrédient")
+    """Add a new ingredient."""
+    st.subheader("Add a new ingredient")
 
     with st.form("add_ingredient_form"):
-        name = st.text_input("Nom de l'ingrédient", placeholder="Ex: Tomate")
-        description = st.text_area("Description", placeholder="Ex: Légume rouge riche en vitamines")
+        name = st.text_input("Ingredient name", placeholder="Ex: Tomato")
+        description = st.text_area("Description", placeholder="Ex: Red vegetable rich in vitamins")
 
-        submitted = st.form_submit_button("Ajouter l'ingrédient")
+        submitted = st.form_submit_button("Add ingredient")
 
         if submitted:
             if not name or not description:
-                st.error("Veuillez remplir tous les champs.")
+                st.error("Please fill in all fields.")
                 return
 
             try:
-                # Ici vous devrez implémenter la méthode create_ingredient dans votre client API
+                # Here you need to implement the create_ingredient method in your API client
                 _ = asyncio.run(ingredient_api_client.create_ingredient(name, description))
-                st.success(f"Ingrédient '{name}' ajouté avec succès!")
+                st.success(f"Ingredient '{name}' added successfully!")
                 st.balloons()
             except Exception as e:
-                st.error(f"Erreur lors de l'ajout: {e}")
+                st.error(f"Error while adding: {e}")
 
 
 def _edit_ingredient():
-    """Modifier un ingrédient existant."""
-    st.subheader("Modifier un ingrédient")
+    """Edit an existing ingredient."""
+    st.subheader("Edit an ingredient")
 
     try:
         ingredients = asyncio.run(ingredient_api_client.get_ingredients())
 
         if not ingredients:
-            st.info("Aucun ingrédient disponible pour modification.")
+            st.info("No ingredients available for editing.")
             return
 
-        # Sélection de l'ingrédient à modifier
+        # Select the ingredient to edit
         ingredient_options = {f"{ing.name} ({ing.id})": ing for ing in ingredients}
-        selected_key = st.selectbox("Choisir un ingrédient à modifier", list(ingredient_options.keys()))
+        selected_key = st.selectbox("Choose an ingredient to edit", list(ingredient_options.keys()))
 
         if selected_key:
             selected_ingredient = ingredient_options[selected_key]
 
             with st.form("edit_ingredient_form"):
-                name = st.text_input("Nom", value=selected_ingredient.name)
+                name = st.text_input("Name", value=selected_ingredient.name)
                 description = st.text_area("Description", value=selected_ingredient.description)
 
-                submitted = st.form_submit_button("Modifier l'ingrédient")
+                submitted = st.form_submit_button("Edit ingredient")
 
                 if submitted:
                     if not name or not description:
-                        st.error("Veuillez remplir tous les champs.")
+                        st.error("Please fill in all fields.")
                         return
 
                     try:
-                        # Ici vous devrez implémenter la méthode update_ingredient dans votre client API
+                        # Here you need to implement the update_ingredient method in your API client
                         _ = asyncio.run(ingredient_api_client.update_ingredient(selected_ingredient.id, name, description))
-                        st.success(f"Ingrédient '{name}' modifié avec succès!")
+                        st.success(f"Ingredient '{name}' updated successfully!")
                     except Exception as e:
-                        st.error(f"Erreur lors de la modification: {e}")
+                        st.error(f"Error while editing: {e}")
 
     except Exception as e:
-        st.error(f"Erreur lors de la récupération des ingrédients: {e}")
+        st.error(f"Error while fetching ingredients: {e}")
 
 
 def _delete_ingredient():
-    """Supprimer un ingrédient."""
-    st.subheader("Supprimer un ingrédient")
-    st.warning("⚠️ Cette action est irréversible!")
+    """Delete an ingredient."""
+    st.subheader("Delete an ingredient")
+    st.warning("⚠️ This action is irreversible!")
 
     try:
         ingredients = asyncio.run(ingredient_api_client.get_ingredients())
 
         if not ingredients:
-            st.info("Aucun ingrédient disponible pour suppression.")
+            st.info("No ingredients available for deletion.")
             return
 
-        # Sélection de l'ingrédient à supprimer
+        # Select the ingredient to delete
         ingredient_options = {f"{ing.name} - {ing.description[:50]}...": ing for ing in ingredients}
-        selected_key = st.selectbox("Choisir un ingrédient à supprimer", list(ingredient_options.keys()))
+        selected_key = st.selectbox("Choose an ingredient to delete", list(ingredient_options.keys()))
 
         if selected_key:
             selected_ingredient = ingredient_options[selected_key]
 
-            st.write(f"**Ingrédient sélectionné :** {selected_ingredient.name}")
-            st.write(f"**Description :** {selected_ingredient.description}")
+            st.write(f"**Selected ingredient:** {selected_ingredient.name}")
+            st.write(f"**Description:** {selected_ingredient.description}")
 
-            # Confirmation de suppression
-            confirm = st.checkbox("Je confirme vouloir supprimer cet ingrédient")
+            # Deletion confirmation
+            confirm = st.checkbox("I confirm I want to delete this ingredient")
 
-            if st.button("🗑️ Supprimer", type="primary", disabled=not confirm):
+            if st.button("🗑️ Delete", type="primary", disabled=not confirm):
                 try:
-                    # Ici vous devrez implémenter la méthode delete_ingredient dans votre client API
+                    # Here you need to implement the delete_ingredient method in your API client
                     success = asyncio.run(ingredient_api_client.delete_ingredient(selected_ingredient.id))
                     if success:
-                        st.success(f"Ingrédient '{selected_ingredient.name}' supprimé avec succès!")
+                        st.success(f"Ingredient '{selected_ingredient.name}' deleted successfully!")
                     else:
-                        st.error("Erreur lors de la suppression.")
+                        st.error("Error while deleting.")
                 except Exception as e:
-                    st.error(f"Erreur lors de la suppression: {e}")
+                    st.error(f"Error while deleting: {e}")
 
     except Exception as e:
-        st.error(f"Erreur lors de la récupération des ingrédients: {e}")
+        st.error(f"Error while fetching ingredients: {e}")

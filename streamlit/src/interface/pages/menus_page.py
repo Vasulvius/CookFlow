@@ -37,15 +37,15 @@ def _show_menus():
     try:
         menus = asyncio.run(menu_api_client.get_menus())
 
+        # Manual refresh button
+        if st.button("🔄 Refresh", key="refresh_menus"):
+            st.rerun()
+
         if not menus:
             st.info("No menus found.")
             return
 
         st.write(f"**Number of menus:** {len(menus)}")
-
-        # Manual refresh button
-        if st.button("🔄 Refresh", key="refresh_menus"):
-            st.rerun()
 
         # Display in a cleaner format
         for i, menu in enumerate(menus, 1):

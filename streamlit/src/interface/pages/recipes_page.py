@@ -47,15 +47,15 @@ def _show_recipes():
     try:
         recipes = asyncio.run(recipe_api_client.get_recipes())
 
+        # Manual refresh button
+        if st.button("🔄 Refresh", key="refresh_recipes"):
+            st.rerun()
+
         if not recipes:
             st.info("No recipes found.")
             return
 
         st.write(f"**Number of recipes:** {len(recipes)}")
-
-        # Manual refresh button
-        if st.button("🔄 Refresh", key="refresh_recipes"):
-            st.rerun()
 
         # Display in a cleaner format
         for i, recipe in enumerate(recipes, 1):
@@ -78,7 +78,7 @@ def _show_recipes():
                                 ingredient = next((ing for ing in ingredients if ing.id == ri.ingredient_id), None)
                                 if ingredient:
                                     st.write(f"• {ingredient.name}: {ri.quantity} {ri.unit}")
-                            except:
+                            except Exception:
                                 st.write(f"• Ingredient ID {ri.ingredient_id}: {ri.quantity} {ri.unit}")
                     else:
                         st.write("**Ingredients:** None")
