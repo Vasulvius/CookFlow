@@ -1,9 +1,13 @@
 - [x] Separer les venv back et front
 - [x] Add menus crud
   - [x] Ajouter un système d'ingrédients et quantités pour les recettes
-  - [ ] Système fixe d'unité (l, cl, ml, unit, kg, g, mg, cs, cc) avec conversion
-  - [ ] Génération d'une liste de course sur la base de menus
+  - [x] Système fixe d'unité (l, cl, ml, unit, kg, g, mg, cs, cc) avec conversion
 - [x] Faire une petit interface graphique avec streamlit
   - [x] Ingredients visual CRUD
   - [x] Recipe visual CRUD
   - [x] Menu visual CRUD
+- [ ] Traduire les commentaires en anglais
+- [ ] Refacto le front streamlit pour le rendre plus modulaire
+- [ ] Ajouter un système de nombre de personnes pour les recettes
+- [ ] Permettre les conversions de quantité pour les menus (matching recette vs nb de personne pour le menu)
+- [ ] Generation de la liste de course
