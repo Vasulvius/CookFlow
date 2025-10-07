@@ -7,6 +7,7 @@ from src.presentation.routers import (
     menu_router,
     recipe_ingredient_router,
     recipe_router,
+    unit_router,
 )
 
 
@@ -63,6 +64,7 @@ app.include_router(recipe_router, prefix="/recipes", tags=["Recipes"])
 app.include_router(menu_router, prefix="/menus", tags=["Menus"])
 app.include_router(ingredient_router, prefix="/ingredients", tags=["Ingredients"])
 app.include_router(recipe_ingredient_router, prefix="/recipe-ingredients", tags=["Recipe Ingredients"])
+app.include_router(unit_router, prefix="/units", tags=["Units"])
 
 
 @app.get("/health")

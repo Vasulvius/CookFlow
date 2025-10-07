@@ -6,6 +6,7 @@ from sqlmodel import Field, Relationship, SQLModel
 if TYPE_CHECKING:
     from src.domain.entities.ingredient import Ingredient
     from src.domain.entities.recipe import Recipe
+    from src.domain.entities.unit import Unit
 
 
 class RecipeIngredient(SQLModel, table=True):
@@ -17,30 +18,31 @@ class RecipeIngredient(SQLModel, table=True):
 
     recipe_id: UUID = Field(foreign_key="recipes.id")
     ingredient_id: UUID = Field(foreign_key="ingredients.id")
+    unit_id: UUID = Field(foreign_key="units.id")
 
     quantity: float = Field()
-    unit: str = Field(max_length=50)
 
     # Relations
     recipe: "Recipe" = Relationship(back_populates="ingredients")
     ingredient: "Ingredient" = Relationship(back_populates="recipes")
+    unit: "Unit" = Relationship()
 
 
 class RecipeIngredientCreate(SQLModel):
     recipe_id: UUID
     ingredient_id: UUID
+    unit_id: UUID
     quantity: float
-    unit: str
 
 
 class RecipeIngredientRead(SQLModel):
     id: UUID
     recipe_id: UUID
     ingredient_id: UUID
+    unit_id: UUID
     quantity: float
-    unit: str
 
 
 class RecipeIngredientUpdate(SQLModel):
+    unit_id: UUID
     quantity: float
-    unit: str
