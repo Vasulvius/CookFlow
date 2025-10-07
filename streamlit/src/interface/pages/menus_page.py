@@ -91,7 +91,7 @@ def _add_menu():
             submitted = st.form_submit_button("Add menu")
 
             if submitted:
-                if not name or not description:
+                if not name:
                     st.error("Please fill in all required fields.")
                     return
 

@@ -72,7 +72,7 @@ def _add_ingredient():
         submitted = st.form_submit_button("Add ingredient")
 
         if submitted:
-            if not name or not description:
+            if not name:
                 st.error("Please fill in all fields.")
                 return
 

@@ -142,7 +142,7 @@ def _add_recipe():
             submitted = st.form_submit_button("Add recipe")
 
             if submitted:
-                if not name or not description:
+                if not name:
                     st.error("Please fill in all required fields.")
                     return
 
