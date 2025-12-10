@@ -1,6 +1,0 @@
-[theme]
-base="dark"
-primaryColor="#bb86fc"  # Couleur des boutons et éléments interactifs
-backgroundColor="#121212"  # Couleur de fond sombre
-secondaryBackgroundColor="#1e1e1e"  # Couleur des panneaux/cartes
-textColor="#ffffff"  # Couleur du texte en blanc
