@@ -1,0 +1,9 @@
+[project]
+name = "cookflow"
+version = "0.1.0"
+requires-python = ">=3.14"
+dependencies = [
+    "alembic>=1.18.0",
+    "dotenv>=0.9.9",
+    "psycopg2-binary>=2.9.11",
+]
