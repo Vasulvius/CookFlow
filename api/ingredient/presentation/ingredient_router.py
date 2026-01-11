@@ -3,7 +3,7 @@ from api.infrastructure.web.abstract_router import AbstractRouter
 
 class IngredientRouter(AbstractRouter):
     def __init__(self):
-        super().__init__(prefix="/toto", tags=["Ingredients"])
+        super().__init__(prefix="/ingredient", tags=["Ingredients"])
 
     def _register_routes(self):
         @self.router.post("/")

@@ -4,7 +4,7 @@ from fastapi import APIRouter
 
 
 class AbstractRouter(ABC):
-    def __init__(self, prefix: str = "/", tags: list[str] = []):
+    def __init__(self, prefix: str = "", tags: list[str] = []):
         self.prefix = prefix
         self.tags = tags
         self.router = APIRouter(prefix=self.prefix, tags=self.tags)
