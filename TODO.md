@@ -1,0 +1,4 @@
+- [ ] Add global settings service
+- [ ] Add event bus system
+- [ ] Type everything
+- [ ] Add usecase in domain layer
